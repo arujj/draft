@@ -14,9 +14,9 @@ html = html.replace(/<script src="\/?([^"]+)" defer><\/script>/g, (_, src) => {
 html = html.replace(/<link rel="icon"[^>]*>/, '');
 html = html.replace(
   '</head>',
-  `<meta name="theme-color" content="#7CC8F2" />
+  `<meta name="theme-color" content="#D1BBF3" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <style>html,body{background:#7CC8F2;overscroll-behavior:none;touch-action:none;-webkit-user-select:none;user-select:none}</style>
+  <style>html,body{background:#D1BBF3;overscroll-behavior:none;touch-action:none;-webkit-user-select:none;user-select:none}</style>
 </head>`,
 );
 writeFileSync(out, html);

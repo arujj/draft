@@ -1,21 +1,21 @@
 # horsie 🐎
 
-A procedurally animated horse built with **React Native Reanimated 4** and **Gesture Handler 3**,
-running on Expo SDK 58. Everything moves on the UI thread from one `useFrameCallback` clock.
-There are no sprites or Lottie files: the horse is about 30 `Animated.View`s in a nested rig.
+The galloping horse from the [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/)
+docs homepage, rebuilt as a React Native app you can play with on your phone. It uses the docs site's own
+11-frame SVG flipbook, sun, swirl, clouds and stars, driven by **Reanimated 4** and **Gesture Handler 3**
+on Expo SDK 58.
+
+Artwork © Software Mansion, from `software-mansion/react-native-reanimated` (MIT), in `src/swmArt.ts`.
 
 ## Interactions
 
 | Gesture | What happens |
 | --- | --- |
-| Drag ← → anywhere | Throttle: idle → walk → trot → canter → gallop, with gait-correct leg phasing |
-| Tap | Rears up with a "NEIGH!" bubble (medium haptic) |
-| Double-tap | Jumps and tucks its legs, then squashes on landing (heavy haptic) |
-| Long-press | Pets the horse: happy eyes, nuzzle and a burst of hearts |
-| Tap the sun | Fades to night with twinkling stars and a moon |
-
-There's also parallax scenery (clouds, two hill layers, fence, grass and flowers), hoof dust at speed,
-a flowing mane and tail, blinking, ear twitches and breathing while idle.
+| Drag ← → anywhere | Playback speed from a standstill up to 3× (1× = the site's 22 fps). Above 1× you get ghost trails, speed lines and dust |
+| Tap | Jump with a squash on landing |
+| Double-tap | Backflip |
+| Hold | Slow motion until you let go |
+| Tap the sun | Dark mode, using the site's dark palette (white horse, lilac moon, twinkling stars) |
 
 ## Run it on your phone
 
@@ -27,5 +27,5 @@ npx expo start      # scan the QR with Expo Go
 ## Single-file web build
 
 ```bash
-npm run build:web   # → dist/horsie.html, one self-contained page
+npm run build:web   # → dist/horsie.html
 ```
