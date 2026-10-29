@@ -10,7 +10,7 @@ A plain Markdown scratchpad: write, preview, copy, print. No account, no ads, no
 | **Copy** | Copies what you're looking at. Write → raw Markdown. Preview → formatted (rich text in Docs/Slack/Mail; still Markdown when pasted into a terminal like Claude Code or Codex). |
 | **⋯ → As code block** | Wraps the note in a ```` ``` ```` fence for Slack. |
 | **Print** | `⌘P` from anywhere prints only the rendered document. The PDF filename is the note title. |
-| **Import from URL** | Paste a GitHub file/repo/gist link to get the README as a note, then print it clean. |
+| **Open GitHub link** (⋯) | Paste a GitHub file/repo/gist link to get the README as a note, then print it clean. |
 | **Notes** | ☰ top left. Saved as you type. Drag a `.md` file onto the window to open it. |
 
 Editor: `⌘B` bold, `⌘I` italic, `⌘K` link, `⌘E` inline code, `Tab`/`⇧Tab` indent, lists continue on Enter. Click checkboxes in Preview to tick them.
