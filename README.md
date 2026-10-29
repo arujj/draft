@@ -7,10 +7,11 @@ A plain Markdown scratchpad: write, preview, copy, print. No account, no ads, no
 | | |
 | --- | --- |
 | **Write / Preview** | Tabs at the top, or `⌘⇧P`. Split view appears on wide screens. |
-| **⧉** | Copies what you see. Write → raw Markdown. Preview → formatted text for Docs, Slack or Mail (a terminal still gets the Markdown). |
-| **PDF** | Prints or saves just the rendered document (`⌘P` works too). The file is named after the note. |
-| **⋯ → Open…** | Paste a GitHub link to bring in its README, or choose a `.md` file. |
+| **⧉ Copy** | Copies what you see. Write → raw Markdown. Preview → formatted text for Docs, Slack or Mail (a terminal still gets the Markdown). |
+| **Export** (page icon) | Saves what you see. Preview → print dialog, where you save a PDF of just the document. Write → the `.md` file (share sheet on iPhone). `⌘P` always prints. |
 | **Notes** | ☰ top left. Saves as you type. Swipe a note left to delete it. |
+| **Import** (bottom of the notes list) | Paste any link or choose a file. GitHub links bring in the README; other web pages come in as clean text via [Jina Reader](https://jina.ai/reader), a free service that sees the link you import. |
+| **Light / dark** | Bottom of the notes list. Follows your device until you pick. |
 
 Editor: `⌘B` bold, `⌘I` italic, `⌘K` link, `Tab` indents, lists continue on Enter. Tick checkboxes right in Preview.
 
