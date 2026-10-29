@@ -306,7 +306,7 @@ svg { display: block; }
 
 /* ── Dialog ──────────────────────────────────────────── */
 dialog {
-  position: fixed; inset: auto 0; top: 30vh; margin: 0 auto; transition: top .25s var(--ease);
+  position: fixed; inset: auto 0; top: calc(env(safe-area-inset-top) + 64px); margin: 0 auto;
   border: 0; border-radius: 18px; padding: 0; width: min(440px, calc(100vw - 32px));
   background: var(--paper); color: var(--ink); box-shadow: var(--shadow);
 }
@@ -964,15 +964,7 @@ $('#docTitle').onclick = openDrawer;
 scrim.onclick = closeDrawer;
 $('#newBtn').onclick = () => { closeDrawer(); newNote(); };
 
-$('#importBtn').onclick = () => { $('#urlErr').hidden = true; dlg.showModal(); placeDialog(); };
-/* Keep the dialog in the visible area above the keyboard. */
-function placeDialog() {
-  if (!dlg.open) return;
-  const vv = window.visualViewport, h = vv ? vv.height : innerHeight, y = vv ? vv.offsetTop : 0;
-  dlg.style.top = `${y + Math.max(12, (h - dlg.offsetHeight) / 2.2)}px`;
-}
-window.visualViewport?.addEventListener('resize', placeDialog);
-window.visualViewport?.addEventListener('scroll', placeDialog);
+$('#importBtn').onclick = () => { $('#urlErr').hidden = true; dlg.showModal(); };
 dlg.addEventListener('click', (e) => { // tap outside the box closes it
   if (e.target !== dlg) return;
   const r = dlg.getBoundingClientRect();
