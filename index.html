@@ -115,10 +115,9 @@ svg { display: block; }
 .btn:active { transform: scale(.95); }
 .btn.primary { background: var(--ink); color: var(--on-ink); }
 .btn.primary:hover { background: var(--ink); opacity: .85; }
-.btn .sub { font-weight: 400; opacity: .6; }
-.btn .ic-check, .copy-code .ic-check { display: none; }
-.btn.done .ic-copy, .copy-code.done .ic-copy { display: none; }
-.btn.done .ic-check, .copy-code.done .ic-check { display: block; }
+.ic-check { display: none; }
+.done .ic-copy { display: none; }
+.done .ic-check { display: block; }
 
 /* ── Panes ───────────────────────────────────────────── */
 .panes { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr; }
@@ -252,22 +251,35 @@ svg { display: block; }
 .drawer-head { flex: none; display: flex; align-items: flex-end; justify-content: space-between; padding: 22px 16px 12px 20px; }
 .drawer-head h2 { margin: 0; font-size: 30px; line-height: 1; font-weight: 700; letter-spacing: -0.025em; }
 .note-list { flex: 1; overflow: auto; margin: 0; padding: 4px 12px 16px; list-style: none; }
+.note-list li { position: relative; border-radius: 12px; overflow: hidden; }
 .note-list li + li { margin-top: 2px; }
-.note-list button {
-  width: 100%; text-align: left; display: block; padding: 11px 14px; border-radius: 12px;
-  transition: background .15s, transform .2s var(--ease);
+.note-list .del {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; padding-right: 20px;
+  background: var(--accent); color: #fff; font-weight: 600; font-size: 15px;
+  opacity: 0; transition: opacity .2s;
 }
-.note-list button:hover { background: var(--fill); }
-.note-list button:active { transform: scale(.98); }
+.note-list li.dragging .del, .note-list li.open .del { opacity: 1; transition: none; }
+.note-list .item {
+  position: relative; width: 100%; text-align: left; display: block; padding: 11px 44px 11px 14px; border-radius: 12px;
+  background: var(--bg-2); touch-action: pan-y;
+  transition: transform .4s var(--ease), background .15s;
+}
+.note-list li.dragging .item { transition: background .15s; }
+.note-list .item:hover { background: color-mix(in srgb, var(--ink) 6%, var(--bg-2)); }
+.note-list .item[aria-current="true"] { background: var(--paper); }
 .note-list .t { display: block; font-weight: 600; font-size: 15.5px; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .note-list .d { display: block; font-size: 13.5px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
 .note-list .d b { font-weight: 500; color: var(--ink); opacity: .75; margin-right: 6px; }
-.note-list [aria-current="true"] { background: var(--paper); box-shadow: 0 1px 2px rgba(0,0,0,.06); }
-.drawer-foot { flex: none; padding: 12px 22px calc(16px + env(safe-area-inset-bottom)); font-size: 12px; color: var(--ink-3); line-height: 1.45; }
+.note-list .trash {
+  position: absolute; right: 8px; top: 50%; margin-top: -15px; width: 30px; height: 30px; border-radius: 50%;
+  display: grid; place-items: center; color: var(--ink-2); opacity: 0; transition: opacity .15s, background .15s;
+}
+.note-list .trash:hover { background: var(--fill); color: var(--accent); }
+@media (hover: hover) { .note-list .item:hover .trash { opacity: 1; } }
 
 /* ── Menu ────────────────────────────────────────────── */
 .menu {
-  position: fixed; z-index: 30; width: 250px;
+  position: fixed; z-index: 30; width: 220px;
   top: calc(var(--bar) + env(safe-area-inset-top) - 6px); right: max(12px, env(safe-area-inset-right));
   background: var(--glass); -webkit-backdrop-filter: blur(30px) saturate(180%); backdrop-filter: blur(30px) saturate(180%);
   border-radius: 14px; box-shadow: var(--shadow), 0 0 0 .5px var(--rule);
@@ -282,9 +294,11 @@ svg { display: block; }
 }
 .menu button:hover, .menu button:active { background: var(--fill); }
 .menu button span { color: var(--ink-2); font-size: 13px; }
-.menu .danger { color: var(--accent); }
+.theme-row { display: flex; padding: 2px; margin: 2px 2px 6px; border-radius: 9px; background: var(--fill); }
+.menu .theme-row button { flex: 1; height: 32px; padding: 0; border-radius: 7px; display: grid; place-items: center; justify-content: center; color: var(--ink-2); }
+.menu .theme-row button:hover { background: transparent; color: var(--ink); }
+.menu .theme-row button[aria-pressed="true"] { background: var(--thumb); color: var(--ink); box-shadow: 0 3px 8px rgba(0,0,0,.12), 0 0 0 .5px rgba(0,0,0,.04); }
 .menu hr { border: 0; height: .5px; background: var(--rule-2); margin: 5px 10px; }
-.menu .label { padding: 8px 12px 2px; font-size: 13px; color: var(--ink-2); }
 
 /* ── Dialog ──────────────────────────────────────────── */
 dialog {
@@ -312,8 +326,11 @@ dialog .err { color: var(--accent); }
   background: var(--glass); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%);
   box-shadow: var(--shadow), 0 0 0 .5px var(--rule);
   color: var(--ink); padding: 10px 18px; border-radius: 999px; font-size: 14px; font-weight: 600;
+  display: flex; align-items: center; gap: 14px;
   transition: transform .35s var(--ease), opacity .2s;
 }
+.toast.on.has-act { pointer-events: auto; }
+.toast button { color: var(--link); font-weight: 600; padding: 2px 0; }
 .toast.on { opacity: 1; transform: translate(-50%, 0); }
 .drop {
   position: fixed; inset: 12px; z-index: 40; display: none; place-items: center; border-radius: 20px;
@@ -329,7 +346,7 @@ dialog .err { color: var(--accent); }
 @media (max-width: 640px) {
   :root { --bar: 52px; }
   .bar { grid-template-columns: auto 1fr auto; gap: 6px; }
-  .doc-title, .btn .sub, .hide-sm, .status { display: none; }
+  .doc-title, .status { display: none; }
   .seg { justify-self: center; }
   .seg button { min-width: 0; padding: 0 16px; }
   .bar-r { gap: 4px; }
@@ -383,11 +400,8 @@ dialog .err { color: var(--accent); }
     <button data-view="split" aria-pressed="false" class="wide-only">Split</button>
   </nav>
   <div class="bar-r">
-    <button class="btn primary" id="copyBtn" title="Copy what you see">
-      <svg class="ic-copy" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4.5" y="4.5" width="8" height="8" rx="2"/><path d="M9.5 2.5a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1"/></svg><svg class="ic-check" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-7"/></svg>
-      <span class="lbl">Copy</span><span class="sub" id="copySub">Markdown</span>
-    </button>
-    <button class="btn hide-sm" id="printBtn" title="Print or save as PDF (⌘P)">Print</button>
+    <button class="icon-btn" id="copyBtn" title="Copy Markdown" aria-label="Copy Markdown"><svg class="ic-copy" width="19" height="19" viewBox="0 0 19 19" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="6.5" y="6.5" width="10" height="10" rx="2.4"/><path d="M12.5 3.8a1.6 1.6 0 0 0-1.6-1.3H4.1A1.6 1.6 0 0 0 2.5 4.1v6.8a1.6 1.6 0 0 0 1.3 1.6"/></svg><svg class="ic-check" width="19" height="19" viewBox="0 0 19 19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10l3.6 3.6L15 5.5"/></svg></button>
+    <button class="btn" id="printBtn" title="Save as PDF or print (⌘P)">PDF</button>
     <button class="icon-btn" id="moreBtn" aria-label="More" title="More" aria-haspopup="menu" aria-expanded="false">
       <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><circle cx="3.5" cy="9" r="1.5"/><circle cx="9" cy="9" r="1.5"/><circle cx="14.5" cy="9" r="1.5"/></svg>
     </button>
@@ -410,33 +424,25 @@ dialog .err { color: var(--accent); }
     <button class="icon-btn" id="newBtn" aria-label="New note" title="New note"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.5H6a2.5 2.5 0 0 0-2.5 2.5v10A2.5 2.5 0 0 0 6 18.5h10a2.5 2.5 0 0 0 2.5-2.5v-4"/><path d="M16.6 2.9a1.6 1.6 0 0 1 2.3 2.3L11.5 12.6 8.5 13.5l.9-3z"/></svg></button>
   </div>
   <ol class="note-list" id="noteList"></ol>
-  <div class="drawer-foot">Saved on this device. Nothing is uploaded.</div>
 </aside>
 
 <div class="menu" id="menu" role="menu">
-  <div class="label">Copy as</div>
-  <button data-act="copy-md">Markdown <span>Plain text</span></button>
-  <button data-act="copy-rich">Formatted <span>Docs, Slack</span></button>
-  <button data-act="copy-fence">Code block <span>For Slack</span></button>
-  <hr>
-  <button data-act="print">Print or Save PDF</button>
-  <button data-act="download">Download file</button>
-  <hr>
-  <button data-act="new">New note</button>
-  <button data-act="import">Open GitHub link…</button>
-  <button data-act="open">Open file…</button>
-  <hr>
-  <button data-act="theme">Theme <span id="themeLbl">Auto</span></button>
-  <button data-act="delete" class="danger">Delete note</button>
+  <div class="theme-row" role="group" aria-label="Appearance">
+    <button data-theme="light" aria-label="Light" title="Light"><svg width="17" height="17" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="9" cy="9" r="3.4"/><path d="M9 1.5v1.6M9 14.9v1.6M1.5 9h1.6M14.9 9h1.6M3.7 3.7l1.1 1.1M13.2 13.2l1.1 1.1M3.7 14.3l1.1-1.1M13.2 4.8l1.1-1.1"/></svg></button>
+    <button data-theme="dark" aria-label="Dark" title="Dark"><svg width="17" height="17" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M15.2 11.3A6.6 6.6 0 0 1 6.7 2.8a6.6 6.6 0 1 0 8.5 8.5z"/></svg></button>
+  </div>
+  <button data-act="open">Open…</button>
+  <button data-act="download">Download .md</button>
 </div>
 
 <dialog id="urlDlg">
   <form method="dialog" id="urlForm">
-    <h3>Open a GitHub link</h3>
-    <p>Paste a link to a repo or a .md file. It opens as a new note, ready to read or print.</p>
+    <h3>Open</h3>
+    <p>Paste a GitHub link to bring in its README as a new note.</p>
     <input id="urlIn" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="github.com/owner/repo">
     <p class="err" id="urlErr" hidden></p>
     <div class="row">
+      <button class="btn" type="button" id="fileBtn" style="margin-right:auto">Choose file…</button>
       <button class="btn" value="cancel" formnovalidate>Cancel</button>
       <button class="btn primary" id="urlGo" value="go">Open</button>
     </div>
@@ -456,6 +462,7 @@ dialog .err { color: var(--accent); }
 const $ = (s) => document.querySelector(s);
 const src = $('#src'), out = $('#out'), panes = $('#panes');
 const COPY_ICON = '<svg class="ic-copy" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4.5" y="4.5" width="8" height="8" rx="2"/><path d="M9.5 2.5a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1"/></svg>', CHECK_ICON = '<svg class="ic-check" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-7"/></svg>';
+const TRASH_ICON = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.7 9.5h6.6L12 4"/></svg>';
 const KEY = 'draft.notes.v1', CUR = 'draft.current', VIEW = 'draft.view', THEME = 'draft.theme';
 
 const WELCOME = `# Draft
@@ -467,21 +474,19 @@ A plain Markdown scratchpad. Write, preview, copy, print. Nothing leaves this de
 | Do | How |
 | --- | --- |
 | Switch view | **Write** / **Preview**, or \`⌘⇧P\` |
-| Copy | Copies what you’re looking at: Markdown in Write, formatted in Preview |
-| Print / PDF | **Print**, or \`⌘P\` anywhere. Only the document prints. |
-| GitHub README → PDF | ⋯ → Open GitHub link, then Print |
+| Copy | The ⧉ icon copies what you see: Markdown in Write, formatted in Preview |
+| PDF | **PDF**, or \`⌘P\`. Only the document prints. |
+| GitHub README → PDF | ⋯ → Open, paste the link, then **PDF** |
 
 ## Notes
 
 - [x] Saves as you type
 - [ ] On iPhone: Share → **Add to Home Screen**
-- Formatted copy pastes as rich text in Docs and Slack, and as Markdown in a terminal
+- Swipe left on a note in the list to delete it
 
 \`\`\`bash
 claude "summarize this"   # paste straight into Claude Code or Codex
 \`\`\`
-
-> Delete this note from ⋯ when you’re done with it.
 `;
 
 /* ── Storage ──────────────────────────────────────── */
@@ -637,13 +642,23 @@ function renderList() {
   list.innerHTML = '';
   [...notes].sort((a, b) => b.updated - a.updated).forEach((n, i) => {
     const li = document.createElement('li');
+    const del = document.createElement('button');
+    del.className = 'del'; del.type = 'button'; del.textContent = 'Delete'; del.tabIndex = -1;
+    del.onclick = () => removeNote(n);
     const b = document.createElement('button');
+    b.className = 'item'; b.type = 'button';
     b.setAttribute('aria-current', n.id === cur.id);
-    b.innerHTML = `<span class="t"></span><span class="d"><b>${fmtDate(n.updated)}</b><span></span></span>`;
+    b.innerHTML = `<span class="t"></span><span class="d"><b>${fmtDate(n.updated)}</b><span></span></span><span class="trash" aria-label="Delete note" title="Delete">${TRASH_ICON}</span>`;
     b.querySelector('.t').textContent = titleOf(n.text);
     b.querySelector('.d span').textContent = snippetOf(n.text);
-    b.onclick = () => { switchTo(n); closeDrawer(); };
-    li.appendChild(b); list.appendChild(li);
+    b.onclick = (e) => {
+      if (b._swiped) { b._swiped = false; return; }
+      if (e.target.closest('.trash')) { removeNote(n); return; }
+      if (li.classList.contains('open')) { closeRows(); return; }
+      switchTo(n); closeDrawer();
+    };
+    swipeable(li, b, () => removeNote(n));
+    li.append(del, b); list.appendChild(li);
   });
 }
 function switchTo(n) { saveNow(); cur = n; store.set(CUR, cur.id); load(); }
@@ -654,12 +669,56 @@ function newNote(text = '', base) {
   notes.push(n); switchTo(n);
   if (!text) { setView('write'); src.focus(); }
 }
-function deleteNote() {
-  if (cur.text.trim() && !confirm(`Delete “${titleOf(cur.text)}”? This can’t be undone.`)) return;
-  notes = notes.filter(n => n !== cur);
-  if (!notes.length) notes.push({ id: uid(), text: '', updated: Date.now() });
-  cur = [...notes].sort((a, b) => b.updated - a.updated)[0];
-  saveNow(); load(); toast('Deleted');
+function removeNote(n) {
+  const i = notes.indexOf(n); if (i < 0) return;
+  const wasCur = n === cur;
+  notes.splice(i, 1);
+  const blank = notes.length ? null : { id: uid(), text: '', updated: Date.now() };
+  if (blank) notes.push(blank);
+  if (wasCur) cur = [...notes].sort((a, b) => b.updated - a.updated)[0];
+  saveNow(); if (wasCur) load(); else renderList();
+  toast('Note deleted', 'Undo', () => {
+    if (blank && !blank.text) notes = notes.filter(x => x !== blank);
+    notes.splice(Math.min(i, notes.length), 0, n);
+    if (wasCur || blank) switchTo(n); else { saveNow(); renderList(); }
+  });
+}
+
+/* Swipe a row left to reveal Delete; swipe far to delete outright. */
+const SWIPE = 84;
+function closeRows(except) {
+  document.querySelectorAll('.note-list li.open').forEach(li => {
+    if (li === except) return;
+    li.classList.remove('open'); li.querySelector('.item').style.transform = '';
+  });
+}
+function swipeable(li, item, onDelete) {
+  let x0 = 0, y0 = 0, start = 0, dx = 0, state = 0; // 0 idle · 1 undecided · 2 swiping
+  const set = (x) => { item.style.transform = x ? `translateX(${x}px)` : ''; };
+  item.addEventListener('pointerdown', (e) => {
+    if (e.button) return;
+    x0 = e.clientX; y0 = e.clientY; start = li.classList.contains('open') ? -SWIPE : 0; dx = start; state = 1;
+  });
+  item.addEventListener('pointermove', (e) => {
+    if (!state) return;
+    const mx = e.clientX - x0, my = e.clientY - y0;
+    if (state === 1) {
+      if (Math.abs(mx) < 8 && Math.abs(my) < 8) return;
+      if (Math.abs(my) > Math.abs(mx)) { state = 0; return; }
+      state = 2; li.classList.add('dragging'); closeRows(li);
+      try { item.setPointerCapture(e.pointerId); } catch {}
+    }
+    dx = Math.min(0, start + mx); set(dx);
+  });
+  const end = () => {
+    if (state !== 2) { state = 0; return; }
+    state = 0; li.classList.remove('dragging'); item._swiped = true;
+    if (dx < -li.offsetWidth * 0.55) { set(-li.offsetWidth); setTimeout(onDelete, 200); }
+    else if (dx < -SWIPE / 2) { li.classList.add('open'); set(-SWIPE); }
+    else { li.classList.remove('open'); set(0); }
+  };
+  item.addEventListener('pointerup', end);
+  item.addEventListener('pointercancel', end);
 }
 
 /* ── View ─────────────────────────────────────────── */
@@ -667,7 +726,8 @@ function setView(v) {
   if (v === 'split' && !matchMedia('(min-width: 1000px)').matches) v = 'preview';
   view = v; panes.dataset.view = v; store.set(VIEW, v);
   document.querySelectorAll('.seg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === v));
-  $('#copySub').textContent = v === 'preview' ? 'Formatted' : 'Markdown';
+  const what = v === 'preview' ? 'Copy formatted' : 'Copy Markdown';
+  $('#copyBtn').title = what; $('#copyBtn').setAttribute('aria-label', what);
   if (v !== 'write') render();
   if (v === 'write' && matchMedia('(hover: hover)').matches) src.focus({ preventScroll: true });
 }
@@ -723,37 +783,28 @@ async function copyRich() {
     panes.dataset.view = prev; return ok;
   }
 }
-function fenced(text) {
-  const runs = text.match(/`{3,}/g) || [];
-  const n = Math.max(3, ...runs.map(r => r.length + 1));
-  const f = '`'.repeat(n);
-  return `${f}markdown\n${text.replace(/\n+$/, '')}\n${f}`;
+async function doCopy() {
+  const rich = view === 'preview';
+  const ok = rich ? await copyRich() : await writeText(src.value);
+  if (ok === false) { toast('Couldn’t copy. Select the text and copy instead.'); return; }
+  const b = $('#copyBtn');
+  b.classList.add('done'); clearTimeout(b._t); b._t = setTimeout(() => b.classList.remove('done'), 1300);
+  toast(rich ? 'Copied formatted' : 'Copied Markdown');
 }
-async function doCopy(kind) {
-  cur.text = src.value;
-  let ok, msg;
-  if (kind === 'rich') { ok = await copyRich(); msg = 'Copied formatted'; }
-  else if (kind === 'fence') { ok = await writeText(fenced(src.value)); msg = 'Copied as code block'; }
-  else { ok = await writeText(src.value); msg = 'Copied Markdown'; }
-  if (ok === false) { toast('Copy blocked — select and copy manually'); return; }
-  flash($('#copyBtn'), 'Copied', true);
-  if (kind === 'fence' || (kind === 'rich') !== (view === 'preview')) toast(msg);
-}
-$('#copyBtn').onclick = () => doCopy(view === 'preview' ? 'rich' : 'md');
+$('#copyBtn').onclick = doCopy;
 
-function flash(btn, text, keepIcon) {
-  const lbl = keepIcon ? btn.querySelector('.lbl') : btn;
-  const sub = btn.querySelector('.sub');
-  clearTimeout(btn._t);
-  if (!btn._orig) btn._orig = lbl.textContent;
-  lbl.textContent = text; btn.classList.add('done'); if (sub) sub.hidden = true;
-  btn._t = setTimeout(() => { lbl.textContent = btn._orig; btn._orig = null; btn.classList.remove('done'); if (sub) sub.hidden = false; }, 1300);
-}
 let toastEl;
-function toast(msg) {
+function toast(msg, action, fn) {
   if (!toastEl) { toastEl = document.createElement('div'); toastEl.className = 'toast'; toastEl.setAttribute('role', 'status'); document.body.appendChild(toastEl); }
-  toastEl.textContent = msg; toastEl.classList.add('on');
-  clearTimeout(toastEl._t); toastEl._t = setTimeout(() => toastEl.classList.remove('on'), 1800);
+  toastEl.textContent = msg;
+  toastEl.classList.toggle('has-act', !!action);
+  if (action) {
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = action;
+    b.onclick = () => { toastEl.classList.remove('on'); fn(); };
+    toastEl.appendChild(b);
+  }
+  toastEl.classList.add('on');
+  clearTimeout(toastEl._t); toastEl._t = setTimeout(() => toastEl.classList.remove('on'), action ? 4500 : 1600);
 }
 
 /* ── Print ────────────────────────────────────────── */
@@ -782,6 +833,7 @@ async function openFile(file) {
   newNote(text); setView('preview'); toast(`Opened ${file.name}`);
 }
 $('#fileIn').onchange = (e) => { openFile(e.target.files[0]); e.target.value = ''; };
+$('#fileBtn').onclick = () => { $('#urlDlg').close(); $('#fileIn').click(); };
 
 function toRawURL(input) {
   let s = input.trim();
@@ -848,30 +900,27 @@ $('#moreBtn').onclick = (e) => {
 };
 document.addEventListener('click', (e) => { if (!menu.contains(e.target)) closeMenu(); });
 
-const THEMES = ['auto', 'light', 'dark'];
-function applyTheme(t) {
-  if (t === 'auto') delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = t;
-  $('#themeLbl').textContent = t[0].toUpperCase() + t.slice(1);
+/* Theme follows the system until you pick one; picking what the system already uses goes back to following it. */
+const sysDark = matchMedia('(prefers-color-scheme: dark)');
+let theme = store.get(THEME, null); if (!['light', 'dark'].includes(theme)) theme = null;
+const systemTheme = () => sysDark.matches ? 'dark' : 'light';
+function applyTheme() {
+  if (theme) document.documentElement.dataset.theme = theme; else delete document.documentElement.dataset.theme;
+  const eff = theme || systemTheme();
+  document.querySelectorAll('.theme-row button').forEach(b => b.setAttribute('aria-pressed', b.dataset.theme === eff));
 }
-let theme = store.get(THEME, 'auto'); if (!THEMES.includes(theme)) theme = 'auto';
-applyTheme(theme);
+sysDark.addEventListener?.('change', applyTheme);
+applyTheme();
 
 menu.addEventListener('click', (e) => {
+  const t = e.target.closest('button[data-theme]');
+  if (t) { theme = t.dataset.theme === systemTheme() ? null : t.dataset.theme; store.set(THEME, theme); applyTheme(); return; }
   const b = e.target.closest('button[data-act]'); if (!b) return;
-  const act = b.dataset.act;
-  if (act !== 'theme') closeMenu();
+  closeMenu();
   ({
-    'copy-md': () => doCopy('md'),
-    'copy-rich': () => doCopy('rich'),
-    'copy-fence': () => doCopy('fence'),
-    'print': doPrint,
+    'open': () => { $('#urlErr').hidden = true; dlg.showModal(); },
     'download': download,
-    'new': () => newNote(),
-    'import': () => { $('#urlErr').hidden = true; dlg.showModal(); },
-    'open': () => $('#fileIn').click(),
-    'theme': () => { theme = THEMES[(THEMES.indexOf(theme) + 1) % 3]; store.set(THEME, theme); applyTheme(theme); },
-    'delete': deleteNote,
-  })[act]();
+  })[b.dataset.act]();
 });
 
 /* ── Editor ───────────────────────────────────────── */
@@ -950,7 +999,7 @@ document.addEventListener('keydown', (e) => {
   const mod = e.metaKey || e.ctrlKey, k = e.key.toLowerCase();
   if (mod && e.shiftKey && k === 'p') { e.preventDefault(); toggleView(); }
   else if (mod && !e.shiftKey && k === 's') { e.preventDefault(); saveNow(); toast('Saved on this device'); }
-  else if (e.key === 'Escape') { closeMenu(); closeDrawer(); }
+  else if (e.key === 'Escape') { closeMenu(); closeRows(); closeDrawer(); }
 });
 
 /* ── Boot ─────────────────────────────────────────── */

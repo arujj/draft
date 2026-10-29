@@ -6,16 +6,15 @@ A plain Markdown scratchpad: write, preview, copy, print. No account, no ads, no
 
 | | |
 | --- | --- |
-| **Write / Preview / Split** | Tabs at the top, or `⌘⇧P` to toggle. Split appears on wide screens. |
-| **Copy** | Copies what you're looking at. Write → raw Markdown. Preview → formatted (rich text in Docs/Slack/Mail; still Markdown when pasted into a terminal like Claude Code or Codex). |
-| **⋯ → As code block** | Wraps the note in a ```` ``` ```` fence for Slack. |
-| **Print** | `⌘P` from anywhere prints only the rendered document. The PDF filename is the note title. |
-| **Open GitHub link** (⋯) | Paste a GitHub file/repo/gist link to get the README as a note, then print it clean. |
-| **Notes** | ☰ top left. Saved as you type. Drag a `.md` file onto the window to open it. |
+| **Write / Preview** | Tabs at the top, or `⌘⇧P`. Split view appears on wide screens. |
+| **⧉** | Copies what you see. Write → raw Markdown. Preview → formatted text for Docs, Slack or Mail (a terminal still gets the Markdown). |
+| **PDF** | Prints or saves just the rendered document (`⌘P` works too). The file is named after the note. |
+| **⋯ → Open…** | Paste a GitHub link to bring in its README, or choose a `.md` file. |
+| **Notes** | ☰ top left. Saves as you type. Swipe a note left to delete it. |
 
-Editor: `⌘B` bold, `⌘I` italic, `⌘K` link, `⌘E` inline code, `Tab`/`⇧Tab` indent, lists continue on Enter. Click checkboxes in Preview to tick them.
+Editor: `⌘B` bold, `⌘I` italic, `⌘K` link, `Tab` indents, lists continue on Enter. Tick checkboxes right in Preview.
 
-Tip: in the print dialog, turn off **Headers and footers** so the browser doesn't add the date/URL.
+Tip: in the print dialog, turn off **Headers and footers** so the browser doesn't add the date and URL.
 
 ## Host it (pick one)
 
