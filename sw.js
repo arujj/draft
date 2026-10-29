@@ -1,5 +1,5 @@
 // Offline cache for the app shell. Bump VERSION when files change.
-const VERSION = 'draft-v8';
+const VERSION = 'draft-v9';
 const SHELL = [
   './', 'index.html', 'manifest.webmanifest',
   'vendor/marked.min.js', 'vendor/purify.min.js', 'vendor/highlight.min.js',
